@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-full bg-[#EBF2FA] antialiased">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Сделки</title>
+    <script type="module" src="./src/main.js" defer></script>
+</head>
+<body class="h-full px-25 pt-13">
+<header class="bg-[#05668D] py-2.5 px-7 flex justify-between rounded-xl items-center">
+    <div class="text-3xl text-white">Сделка</div>
+    <button class="py-3 px-7 text-black text-base bg-[#A5BE00] rounded-xl" type="button">Добавить запись</button>
+</header>
+<main class="pt-8 pb-13 flex flex-col lg:flex-row gap-8">
+    <section class="flex-1 space-y-6">
+        <div class="flex flex-wrap gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+            <select id="filter-city" class="filter-select"></select>
+
+            <select id="filter-status" class="filter-select">
+                <option value="">Все статусы</option>
+                <option value="accepted">Одобрено</option>
+                <option value="rejected">Отклонено</option>
+            </select>
+
+            <select id="filter-date" class="filter-select">
+                <option value="all">Все даты</option>
+                <option value="today">Сегодня</option>
+            </select>
+        </div>
+        <div class="overflow-x-auto bg-white rounded-2xl shadow-sm border border-slate-200">
+            <table class="min-w-full divide-y divide-slate-100">
+                <thead class="bg-slate-50 text-slate-600 uppercase text-xs tracking-wider">
+                <tr>
+                    <th class="px-6 py-4 text-left font-semibold">ID</th>
+                    <th class="px-6 py-4 text-left font-semibold">Город</th>
+                    <th class="px-6 py-4 text-left font-semibold">Статус</th>
+                    <th class="px-6 py-4 text-left font-semibold">Причина</th>
+                    <th class="px-6 py-4 text-left font-semibold">Дата</th>
+                </tr>
+                </thead>
+                <tbody id="deals-table" class="divide-y divide-slate-100 text-sm text-slate-700">
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <aside class="lg:w-80 flex flex-col gap-4" id="deals-stats">
+        <div class="rounded-2xl bg-green-100 text-green-700 px-6 py-4 shadow-sm">
+            <div class="text-sm font-medium">Одобрено сегодня</div>
+            <div class="text-3xl font-semibold mt-1" id="deals-accepted-today">0</div>
+        </div>
+        <div class="rounded-2xl bg-red-100 text-red-700 px-6 py-4 shadow-sm">
+            <div class="text-sm font-medium">Отклонено сегодня</div>
+            <div class="text-3xl font-semibold mt-1" id="deals-rejected-today">0</div>
+        </div>
+    </aside>
+</main>
+<div id="modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 hidden">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl space-y-4 relative">
+        <h2 class="text-xl font-semibold">Добавить запись</h2>
+        <form id="deal-form" class="space-y-4">
+            <div>
+                <label for="city-select" class="block text-sm font-medium">Город</label>
+                <select id="city-select" class="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg text-sm"
+                        required>
+                    <option value="">Выберите город</option>
+                </select>
+                <p id="city-error" class="text-sm text-red-600 mt-1 hidden">Пожалуйста, выберите город.</p>
+            </div>
+
+            <div class="space-x-4">
+                <label class="inline-flex items-center">
+                    <input type="radio" name="status" value="accepted" class="text-green-600" required>
+                    <span class="ml-2 text-sm">Одобрено</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" name="status" value="rejected" class="text-red-600">
+                    <span class="ml-2 text-sm">Отклонено</span>
+                </label>
+                <p id="status-error" class="text-sm text-red-600 mt-1 hidden">Пожалуйста, выберите статус.</p>
+            </div>
+
+            <div id="reason-container" class="hidden">
+                <label for="reason" class="block text-sm font-medium">Причина отказа</label>
+                <input type="text" id="reason"
+                       class="mt-1 w-full px-4 py-2 border border-slate-300 rounded-lg text-sm"/>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <button type="button" class="px-4 py-2 rounded-lg text-sm font-medium bg-[#A5BE00] hover:bg-[#679436]" id="cancel-button">Отмена</button>
+                <button type="submit"
+                        class="bg-[#05668D] hover:bg-[#427AA1] text-white px-4 py-2 rounded-lg text-sm font-medium">
+                    Добавить
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

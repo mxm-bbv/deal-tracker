@@ -1,0 +1,68 @@
+volumes:
+  caddy-config:
+  caddy-data:
+
+networks:
+  deal-tracker-network:
+    driver: bridge
+    name: deal-tracker-network
+
+services:
+  caddy:
+    container_name: server
+    image: caddy/caddy:2.10.0-alpine
+    restart: on-failure
+    ports:
+      - "80:80"
+      - "443:443"
+    tty: true
+    volumes:
+      - caddy-config:/config
+      - caddy-data:/data
+      - ./caddy/:/etc/caddy/
+      - ./caddy/certs/:/etc/caddy/certs/
+      - ../project:/var/www/project
+    depends_on:
+      - web
+      - api
+    networks:
+      - deal-tracker-network
+  
+  api:
+    container_name: api
+    image: devilbox/php-fpm:8.2-work
+    tty: true
+    restart: on-failure
+    volumes:
+      - ../project/api:/var/www/project/api
+    working_dir: /var/www/project/api
+    networks:
+      - deal-tracker-network
+  
+  web:
+    container_name: web
+    image: node:22.1.0-alpine
+    expose:
+      - 3000
+    volumes:
+      - ../project/web:/var/www/project/web
+    working_dir: /var/www/project/web
+    tty: true
+    networks:
+      - deal-tracker-network
+    entrypoint: ["/bin/sh", "-c", "npm install && npm run build && npm run preview"]
+  
+  database:
+    container_name: database
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_USER: ${DB_USERNAME:-admin}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-deal@tracker!}
+      MYSQL_DATABASE: ${DB_DATABASE:-deal_tracker}
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-deal@tracker!}
+    networks:
+      - deal-tracker-network

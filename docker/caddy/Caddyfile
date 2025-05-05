@@ -1,0 +1,15 @@
+api.deal-tracker.local {
+    root            * /var/www/project/api/public
+    encode          zstd gzip
+    php_fastcgi     api:9000
+        
+    # SSL
+    tls /etc/caddy/certs/api.deal-tracker.local.pem /etc/caddy/certs/api.deal-tracker.local-key.pem
+}
+
+deal-tracker.local {
+    reverse_proxy web:3000
+    
+    # SSL
+    tls /etc/caddy/certs/deal-tracker.local.pem /etc/caddy/certs/deal-tracker.local-key.pem
+}
